@@ -27,7 +27,8 @@ const mu = (vector1: Vector, vector2: Vector): number => {
   return dot(vector1, vector2) / dot(vector2, vector2)
 }
 
-const gram_schmidt = (base: Base): Base => {
+const gram_schmidt = (basis: Base): Base => {
+  let base = [...basis]
   let n = base.length
   for (let i = 0; i < n; i++) {
     for (let j = 0; j < i; j++) {
@@ -35,10 +36,8 @@ const gram_schmidt = (base: Base): Base => {
       base[i] = diff(base[i], multiply(t, base[j]))
     }
   }
-  return base.map(el => normalize(el))
+  return base
 }
-
-console.log(gram_schmidt([[4, 1, 2], [4, 7, 2], [3, 1, 7]]))
 
 const lll = (base: Base, delta: number): Base => {
   const n = base.length
@@ -52,10 +51,13 @@ const lll = (base: Base, delta: number): Base => {
         ortho = gram_schmidt(base)
       }
     }
-    if (dot(ortho[k], ortho[k]) > ((delta - mu(base[k], ortho[k - 1]) * dot(ortho[k - 1], ortho[k - 1])))) {
+    let mu_kk = mu(base[k], ortho[k - 1])
+    if (dot(ortho[k], ortho[k]) >= ((delta - (mu_kk * mu_kk)) * dot(ortho[k - 1], ortho[k - 1]))) {
       k += 1
     } else {
-      [base[k], base[k - 1]] = [base[k - 1], base[k]]
+      const bk = [...base[k]]
+      base[k] = [...base[k - 1]]
+      base[k - 1] = bk
       ortho = gram_schmidt(base)
       k = Math.max(k - 1, 1)
     }
