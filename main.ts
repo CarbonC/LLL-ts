@@ -55,9 +55,7 @@ const lll = (base: Base, delta: number): Base => {
     if (dot(ortho[k], ortho[k]) >= ((delta - (mu_kk * mu_kk)) * dot(ortho[k - 1], ortho[k - 1]))) {
       k += 1
     } else {
-      const bk = [...base[k]]
-      base[k] = [...base[k - 1]]
-      base[k - 1] = bk
+      [base[k], base[k - 1]] = [base[k - 1], base[k]]
       ortho = gram_schmidt(base)
       k = Math.max(k - 1, 1)
     }
